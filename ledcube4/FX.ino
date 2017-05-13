@@ -48,7 +48,7 @@ namespace FX {
     //run(visualize, LAYER);
   }
 
-  void run(void (*func)(int options), int options, int count) {
+  void run(effect_func func, int options, int count) {
     if (modeChanged) return;
     Audio::clapped = false;
     Cube::point_of_view(1);
@@ -77,7 +77,7 @@ namespace FX {
     }
   }
 
-  void rotate(void (*func)(int options), int options) {
+  void rotate(effect_func func, int options) {
     for (int i = 1; i <= 4; i++) {
       Cube::point_of_view(i);
       Cube::clear();
@@ -141,20 +141,14 @@ namespace FX {
 
   void extend_from_corner(int options) {
     int* layer;
+    int tempUpper[] = { 3,2,1,0 };
+    int tempLower[] = { 0,1,2,3 };
     if (!(options & UPPER) && !(options & LOWER))
       return;
-    if (options & UPPER) {
-      int temp[] = {
-        3,2,1,0    
-      };
-      layer = temp;
-    }
-    if (options & LOWER) {
-      int temp[] = {
-        0,1,2,3            
-      };
-      layer = temp;
-    }
+    if (options & UPPER)
+      layer = tempUpper;
+    if (options & LOWER)
+      layer = tempLower;
     Cube::on(layer[0], 0);
     Cube::display(50);
     Cube::on(layer[1], 0);
@@ -328,6 +322,13 @@ namespace FX {
       }
     }
     Cube::display(1);
+  }
+
+  struct effect_info* to_effect(String cmd) {
+    for (int i = 0; i < EFFECT_NUMBER; i++)
+      if (effects[i].name == cmd)
+	return &effects[i];
+    return nullptr;
   }
 
 }

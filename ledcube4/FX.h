@@ -10,6 +10,8 @@ namespace FX {
 #define LAYER     0b100000
 #define COLUMN    0b1000000
 
+#define EFFECT_NUMBER 10
+
   //number of -1's controls snake length
   char snakeLeds[] = {
     -1, -1, -1, -1   
@@ -21,14 +23,22 @@ namespace FX {
   char img[] = { 
     1,1,1,1,1,1,1,0,1,1,0,0,1,0,0,0            
   };
-  
-  void (*effect)(int options);
+
+  typedef void (*effect_func)(int options);
+  effect_func effect;
+
+  struct effect_info {
+    effect_func func;
+    String name;
+    int options;
+    int count;
+  };
 
   void loop();
   void clap();
   void visual();
-  void run(void (*func)(int options), int options = 0, int count = 1);
-  void rotate(void (*func)(int options), int options);
+  void run(effect_func func, int options = 0, int count = 1);
+  void rotate(effect_func func, int options);
   void blend(int options);
   void fill(int options);
   void scanner(int options);
@@ -40,4 +50,18 @@ namespace FX {
   void fan(int options);
   void visualize(int options);
 
+  struct effect_info effects[EFFECT_NUMBER] = {
+    { .func = blend,              .name = "blend",              .options = MIRROR,                  .count = 1 },
+    { .func = fill,               .name = "fill",               .options = MIRROR | ROTATE,         .count = 1 },
+    { .func = scanner,            .name = "scanner",            .options = MIRROR | ROTATE,         .count = 1 },
+    { .func = randomize,          .name = "randomize",          .options = NONE,                    .count = 400 },
+    { .func = extend_from_corner, .name = "extend_from_corner", .options = UPPER | MIRROR | ROTATE, .count = 1 },
+    { .func = snake,              .name = "snake",              .options = NONE,                    .count = 30 },
+    { .func = up_down,            .name = "up_down",            .options = NONE,                    .count = 20 },
+    { .func = image,              .name = "image",              .options = MIRROR | ROTATE | LAYER, .count = 1 },
+    { .func = fan,                .name = "fan",                .options = NONE,                    .count = 10 },
+    { .func = visualize,          .name = "visualize",          .options = COLUMN,                  .count = 1 }
+  };
+
+  struct effect_info* to_effect(String cmd);
 }
