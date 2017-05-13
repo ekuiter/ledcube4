@@ -77,6 +77,7 @@ void switchMode() {
     else if ((tmp_effect = FX::to_effect(cmd)))
       effect = tmp_effect, modeChanged = true, mode = EFFECT;
     else
-      Serial.println("command not recognized");
+      Serial.print("command not recognized");
+    Serial.println();
   }
 }
